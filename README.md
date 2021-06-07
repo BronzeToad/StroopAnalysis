@@ -122,6 +122,8 @@ If we take a look at this plot, we can see that the congruent response times do 
 
 ![Box Plot with Swarm](plot_box_swarm.png)
 
+<br>
+
 ### Histograms
 Next, we create a histogram for both the congruent and incongruent response times. Histograms are helpful when analyzing the underlying frequency distribution of a set of continuous data. [\[7\]][7]
 
@@ -139,6 +141,8 @@ sns.displot(stroop_df, \
 The histograms reveal that the response time is greater for those data points recorded under incongruent conditions when compared to those recorded under congruent conditions.
 
 ![Histograms](plot_histo.png)
+
+<br>
 
 ### Empirical Cumulative Distributions
 Another option for visualizing distributions is performed by charting the empirical cumulative distribution function (ECDF). This plot represents a monotonically increasing line through each datapoint such that the height of the line represents the proportion of observations with a smaller value. This plot has a distinct advantage over a histogram – it directly represents each datapoint. This means there is no bin size to consider. [\[8\]][8]
@@ -158,6 +162,8 @@ sns.displot(stroop_df, \
 The ECDF plot suggests that the incongruent condition adversely affects the participant response times.
 
 ![Empirical Cumulative Distributions](plot_ecdf.png)
+
+<br>
 
 ### Kernel Density Estimations
 Our previous attempts at visualizing this data have done a good job comparing the distributions of our different response times, but only if we understand how to read and interpret box plots, swarm plots, histograms, and ECDF plots. 
