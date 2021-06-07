@@ -12,7 +12,7 @@ Experimental findings have shown that when participants are asked to name the co
 <br>
 
 ### Independent Variable
-The variable in an experiment that is changed: for a Stroop effect experiment, the independent variable is – the colors in which the words are printed. [\[4\]][4]
+The variable in an experiment that is changed: for a Stroop effect experiment, the independent variable is – whether the words are congruent with the color in which they were printed, or incongruent with those colors.   [\[4\]][4]
 
 <br>
 
