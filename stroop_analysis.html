@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Statistical Analysis &ndash; The Stroop Effect</title>
+        <style>
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="statistical-analysis--the-stroop-effect">Statistical Analysis – The Stroop Effect</h1>
+<p>In a Stroop test, participants are presented with a list of words, with each word displayed in a color of ink. The participant’s task is to say out loud the color of the ink in which the word is printed. The task has two conditions: a congruent words condition, and an incongruent words condition.</p>
+<p>In the congruent words condition, the words being displayed are color words whose names match the colors in which they are printed. In the incongruent words condition, the words displayed are color words whose names do not match the colors in which they are printed. In each case, we measure the time it takes to name the ink colors in equally sized lists.</p>
+<p>Experimental findings have shown that when participants are asked to name the color of the word their response has a higher rate of error, and takes longer, when the name of the color does not match the color of the ink. This effect is known as the Stroop effect – the delay in reaction time between congruent and incongruent stimuli. <a href="https://en.wikipedia.org/wiki/Stroop_effect" title="Wikipedia - Stroop Effect">[1]</a></p>
+<ul>
+<li>You can try the Stroop test out for yourself here: <a href="https://faculty.washington.edu/chudler/java/ready.html" title="Interactive Stroop Test">Interactive Stroop Test</a></li>
+<li>The rest of this page explores Stroop test data that can be found here: <a href="https://drive.google.com/file/d/0B9Yf01UaIbUgQXpYb2NhZ29yX1U/" title="Stroop Test Dataset">Stroop Test Dataset</a></li>
+</ul>
+<br>
+<h3 id="independent-variable">Independent Variable</h3>
+<p>The variable in an experiment that is changed: for a Stroop effect experiment, the independent variable is – the colors in which the words are printed. <a href="https://www.verywellmind.com/what-is-the-stroop-effect-2795832" title="The Stroop Effect: Naming a Color but Not the Word">[4]</a></p>
+<br>
+<h3 id="dependent-variable">Dependent Variable</h3>
+<p>The variable in an experiment that is measured: for a Stroop effect experiment, the dependent variable is – the time it takes each participant to identify the colors for all the words provided. <a href="https://www.verywellmind.com/what-is-the-stroop-effect-2795832" title="The Stroop Effect: Naming a Color but Not the Word">[4]</a></p>
+<br>
+<h3 id="alternative-hypothesis">Alternative Hypothesis</h3>
+<p>The outcome a researcher is anticipating: for a Stroop effect experiment, the alternative hypothesis is – for the sample population, the average response time under the congruent words condition is less than the average response time under the incongruent words condition.</p>
+<br>
+<h3 id="null-hypothesis">Null Hypothesis</h3>
+<p>The opposite of the alternative hypothesis: for a Stroop effect experiment, the null hypothesis is – the difference between the mean response times for the sample populations is not statistically significant when comparing those under the incongruent words condition and those under the congruent words condition.</p>
+<br>
+<h3 id="statistical-test">Statistical Test</h3>
+<p>For this dataset, we do not know the population standard deviation, and the sample size is less than 30; this means we cannot use a z-test. <a href="https://www.analyticsvidhya.com/blog/2020/06/statistics-analytics-hypothesis-testing-z-test-t-test/" title="Statistics for Analytics and Data Science: Hypothesis Testing and Z-Test vs. T-Test">[5]</a></p>
+<p>A good test to use for this project is a paired sample t-test. However, several assumptions must be met in order for paired sample t-test results to be trusted. <a href="https://pythonfordatascienceorg.wordpress.com/paired-samples-t-test-python/" title="Python for Data Science - Paired Sample t-test">[6]</a></p>
+<ul>
+<li>The observations are independent</li>
+<li>The data needs to be continuous when measured on a ratio or interval scale</li>
+<li>The data should be roughly normally distributed.
+<ul>
+<li>The paired sample t-test is quite robust to violations of this assumption, and the test results can be considered valid so long as there isn’t a major violation of normality.</li>
+</ul>
+</li>
+</ul>
+<br>
+<h2 id="descriptive-statistics">Descriptive Statistics</h2>
+<p>The first step before we can analyze the dataset is to import the sample dataset into Python. We’ll read the data using the pandas library. After that, we can print the data frame to get an idea of how the data is structured.</p>
+<pre><code class="language-python"><div><span class="hljs-comment"># import data and take a look</span>
+<span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
+
+df = pd.read_csv(<span class="hljs-string">&#x27;stroopData.csv&#x27;</span>)
+print(df)
+</div></code></pre>
+<br>
+<p>Next, we’ll print some high-level descriptive statistics.</p>
+<pre><code class="language-python"><div><span class="hljs-comment"># get summary statistics</span>
+df[[<span class="hljs-string">&#x27;Congruent&#x27;</span>, <span class="hljs-string">&#x27;Incongruent&#x27;</span>]].describe()
+</div></code></pre>
+<p><img src="file:////Users/ajp/Documents/WGU/Udacity NanoDegree/Intro to Data Science/Project - Stroop Analysis/wgu-stroop-analysis/summary_stats.png" alt="Stroop Summary Statistics"></p>
+<br>
+<h2 id="visualizing-distributions">Visualizing Distributions</h2>
+<p>Often, the best way to discover patterns is to visually compare distributions. However, we first need to reshape the data into a format more conducive to creating visualizations in Python.</p>
+<pre><code class="language-python"><div><span class="hljs-comment"># clean data frame prior to analysis</span>
+
+<span class="hljs-comment"># convert index into participant id</span>
+df.reset_index(level=<span class="hljs-number">0</span>, inplace=<span class="hljs-literal">True</span>)
+df[<span class="hljs-string">&#x27;ParticipantID&#x27;</span>] = df[<span class="hljs-string">&#x27;index&#x27;</span>] + <span class="hljs-number">1</span>
+<span class="hljs-keyword">del</span> df[<span class="hljs-string">&#x27;index&#x27;</span>]
+
+<span class="hljs-comment"># reshape data frame into long format</span>
+stroop_df = pd.melt(df, \
+    id_vars = <span class="hljs-string">&#x27;ParticipantID&#x27;</span>, \
+    value_vars = [<span class="hljs-string">&#x27;Congruent&#x27;</span>, <span class="hljs-string">&#x27;Incongruent&#x27;</span>], \
+    var_name = <span class="hljs-string">&#x27;ConditionType&#x27;</span>, \
+    value_name = <span class="hljs-string">&#x27;ResponseTime&#x27;</span>)
+
+print(stroop_df)
+</div></code></pre>
+<br>
+<p>Now that our data is ready to go, we can import the Python library used to create all the visualizations in this article: seaborn.</p>
+<pre><code class="language-python"><div><span class="hljs-comment"># import visualization library</span>
+<span class="hljs-keyword">import</span> seaborn <span class="hljs-keyword">as</span> sns
+</div></code></pre>
+<br>
+<h3 id="box-plot--swarm-plot">Box Plot &amp; Swarm Plot</h3>
+<p>First, we’re going to create a box plot and swarm plot; then stack them on top of one another. This visualization allows us to easily spot any outliers.</p>
+<pre><code class="language-python"><div><span class="hljs-comment"># box plot with swarm to check for outliers</span>
+
+sns.boxplot(data = stroop_df, \
+    x = <span class="hljs-string">&#x27;ConditionType&#x27;</span>, \
+    y = <span class="hljs-string">&#x27;ResponseTime&#x27;</span>)
+
+sns.swarmplot(data = stroop_df, \
+    x = <span class="hljs-string">&#x27;ConditionType&#x27;</span>, \
+    y = <span class="hljs-string">&#x27;ResponseTime&#x27;</span>, \
+    color = <span class="hljs-string">&#x27;.25&#x27;</span>)
+</div></code></pre>
+<br>
+<p>If we take a look at this plot, we can see that the congruent response times do not have any outliers, but the incongruent response times have a few.</p>
+<p><img src="file:////Users/ajp/Documents/WGU/Udacity NanoDegree/Intro to Data Science/Project - Stroop Analysis/wgu-stroop-analysis/plot_box_swarm.png" alt="Box Plot with Swarm"></p>
+<h3 id="histograms">Histograms</h3>
+<p>Next, we create a histogram for both the congruent and incongruent response times. Histograms are helpful when analyzing the underlying frequency distribution of a set of continuous data. <a href="https://statistics.laerd.com/statistical-guides/understanding-histograms.php" title="Laerd Statistics - Understanding Histograms">[7]</a></p>
+<pre><code class="language-python"><div><span class="hljs-comment"># histogram</span>
+
+sns.displot(stroop_df, \
+    x = <span class="hljs-string">&#x27;ResponseTime&#x27;</span>, \
+    col = <span class="hljs-string">&#x27;ConditionType&#x27;</span>, \
+    multiple = <span class="hljs-string">&#x27;dodge&#x27;</span>)
+</div></code></pre>
+<br>
+<p>The histograms reveal that the response time is greater for those data points recorded under incongruent conditions when compared to those recorded under congruent conditions.</p>
+<p><img src="file:////Users/ajp/Documents/WGU/Udacity NanoDegree/Intro to Data Science/Project - Stroop Analysis/wgu-stroop-analysis/plot_histo.png" alt="Histograms"></p>
+<h3 id="empirical-cumulative-distributions">Empirical Cumulative Distributions</h3>
+<p>Another option for visualizing distributions is performed by charting the empirical cumulative distribution function (ECDF). This plot represents a monotonically increasing line through each datapoint such that the height of the line represents the proportion of observations with a smaller value. This plot has a distinct advantage over a histogram – it directly represents each datapoint. This means there is no bin size to consider. <a href="https://seaborn.pydata.org/tutorial/distributions.html" title="Seaborn - Visualizing distributions of data">[8]</a></p>
+<pre><code class="language-python"><div><span class="hljs-comment"># empirical cumulative distributions</span>
+
+sns.displot(stroop_df, \
+    x = <span class="hljs-string">&#x27;ResponseTime&#x27;</span>, \
+    hue = <span class="hljs-string">&#x27;ConditionType&#x27;</span>, \
+    kind = <span class="hljs-string">&#x27;ecdf&#x27;</span>, \
+    palette = <span class="hljs-string">&#x27;Accent&#x27;</span>)
+</div></code></pre>
+<br>
+<p>The ECDF plot suggests that the incongruent condition adversely affects the participant response times.</p>
+<p><img src="file:////Users/ajp/Documents/WGU/Udacity NanoDegree/Intro to Data Science/Project - Stroop Analysis/wgu-stroop-analysis/plot_ecdf.png" alt="Empirical Cumulative Distributions"></p>
+<h3 id="kernel-density-estimations">Kernel Density Estimations</h3>
+<p>Our previous attempts at visualizing this data have done a good job comparing the distributions of our different response times, but only if we understand how to read and interpret box plots, swarm plots, histograms, and ECDF plots.</p>
+<p>In order to create a visualization that is quickly and easily understood by the average reader, we turn to the kernel density estimation (KDE) plot. Using KDE plots has several advantages:</p>
+<ul>
+<li>They allow for simple comparisons between subsets</li>
+<li>Important features of the data are easy to discern (bimodality, central tendency, skew, etc.) <a href="https://seaborn.pydata.org/tutorial/distributions.html" title="Seaborn - Visualizing distributions of data">[8]</a></li>
+</ul>
+<pre><code class="language-python"><div><span class="hljs-comment"># kernel density estimation</span>
+
+sns.displot(stroop_df, \
+    x = <span class="hljs-string">&#x27;ResponseTime&#x27;</span>, \
+    hue = <span class="hljs-string">&#x27;ConditionType&#x27;</span>, \
+    kind = <span class="hljs-string">&#x27;kde&#x27;</span>, \
+    fill = <span class="hljs-literal">True</span>, \
+    palette = <span class="hljs-string">&#x27;Accent&#x27;</span>)
+</div></code></pre>
+<br>
+<p>When comparing the two subsets of data for the congruent and incongruent conditions visualized on our KDE plot, it’s clear that dataset for the incongruent condition is shifted to the right; further reinforcing our idea that participant response times under the incongruent condition (<em>purple</em>) are slower than those under the congruent condition (<em>green</em>).</p>
+<p><img src="file:////Users/ajp/Documents/WGU/Udacity NanoDegree/Intro to Data Science/Project - Stroop Analysis/wgu-stroop-analysis/plot_kde.png" alt="Kernel Density Estimation"></p>
+ <br>
+<h2 id="statistical-analysis">Statistical Analysis</h2>
+<p>In the previous section we observed some interesting trends, but now we need to perform some statistical analysis to determine whether we can reject our null hypothesis. Specifically, we want to establish that the difference between mean response times of participants under congruent conditions and incongruent conditions is greater than zero. We do this by rejecting our null hypothesis – the difference between mean response times for the sample populations is not a result of the change between congruent conditions and incongruent conditions.</p>
+<p>For the reasons outlined above, we have decided to utilize the paired sample t-test for this analysis.  We will select a confidence interval of 99%, meaning we reject the null hypothesis if the p-value is less than 0.01. To perform this test, and to calculate our t-distribution and p-value, we will utilize the stats Python package.</p>
+<pre><code class="language-python"><div><span class="hljs-comment"># paired sample t-test</span>
+<span class="hljs-keyword">from</span> scipy <span class="hljs-keyword">import</span> stats
+
+t_val, p_val = stats.ttest_rel(df.Incongruent, df.Congruent)
+print(<span class="hljs-string">&quot;t-distribution = %g&quot;</span> % t_val)
+print(<span class="hljs-string">&quot;p-value = %g&quot;</span> % p_val)
+
+adj_p_val = p_val / <span class="hljs-number">2</span>
+print(<span class="hljs-string">&quot;adjusted p-value = %g&quot;</span> % adj_p_val)
+</div></code></pre>
+<blockquote>
+<p>t-distribution = 8.02071 <br>
+p-value = 4.103e-08</p>
+</blockquote>
+<br>
+<p>This function returns a two-tailed p-value, but our alternative hypothesis is one-tailed; this means we need to adjust the p-value by dividing it by two before comparing it to our selected confidence interval. <a href="https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-what-are-the-differences-between-one-tailed-and-two-tailed-tests/" title="UCLA - What are the differences between one-tailed and two-tailed tests?">9</a></p>
+<pre><code class="language-python"><div><span class="hljs-comment"># adjusted p-value</span>
+
+adj_p_val = p_val / <span class="hljs-number">2</span>
+print(<span class="hljs-string">&quot;adjusted p-value = %g&quot;</span> % adj_p_val)
+</div></code></pre>
+<blockquote>
+<p>adjusted p-value = 2.0515e-08</p>
+</blockquote>
+<br>
+<p>Our adjusted p-value is 2.0515e-08 which is less than the alpha value of 0.01 we determined above. Therefore, the null hypothesis can be rejected, and our alternative hypothesis can be accepted.</p>
+<br>
+<h2 id="discussion">Discussion</h2>
+<p>The Stroop test dataset provided evidence that the participants could correctly identify the color of the ink in which the word is printed faster when the colors matched the word (congruent conditions). Through statistical inference we have demonstrated with 99% confidence that this evidence shows a significant effect that can be generalize to the larger population.</p>
+<p>Although our statistical analysis confirms the existence of a real effect – as opposed to random chance – it does not provide any explanation for <em>why</em> this occurs.</p>
+<p>The objective of the Stroop test is to identify the color in which the words are printed. The results suggest that participants read the word before determining the color despite knowing that the word and its meaning are irrelevant to the exercise.</p>
+<p>There are two cognitive processes at play:</p>
+<ol>
+<li>Reading and interpreting the text of the word</li>
+<li>Identifying the color in which the word is printed.</li>
+</ol>
+<p>The Stroop test and these data indicate that the reading process inhibits the color-identifying process and causes a delay in the time it takes to determine the color of ink used.</p>
+<p>It would be interesting to explore a few variations to this experiment in the future. What happens when the colors are written in a language the reader is not familiar with? What about if the words are gibberish or upside-down?</p>
+<br>
+<h2 id="references">References</h2>
+<p><a href="https://en.wikipedia.org/wiki/Stroop_effect" title="Wikipedia - Stroop Effect">[1] Wikipedia - Stroop Effect</a></p>
+<p><a href="https://faculty.washington.edu/chudler/java/ready.html" title="Interactive Stroop Test">[2] Interactive Stroop Test</a></p>
+<p><a href="https://drive.google.com/file/d/0B9Yf01UaIbUgQXpYb2NhZ29yX1U/" title="Stroop Test Dataset">[3] Stroop Test Dataset</a></p>
+<p><a href="https://www.verywellmind.com/what-is-the-stroop-effect-2795832" title="The Stroop Effect: Naming a Color but Not the Word">[4] The Stroop Effect: Naming a Color but Not the Word</a></p>
+<p><a href="https://www.analyticsvidhya.com/blog/2020/06/statistics-analytics-hypothesis-testing-z-test-t-test/" title="Statistics for Analytics and Data Science: Hypothesis Testing and Z-Test vs. T-Test">[5] Statistics for Analytics and Data Science: Hypothesis Testing and Z-Test vs. T-Test</a></p>
+<p><a href="https://pythonfordatascienceorg.wordpress.com/paired-samples-t-test-python/" title="Python for Data Science - Paired Sample t-test">[6] Python for Data Science - Paired Sample t-test</a></p>
+<p><a href="https://statistics.laerd.com/statistical-guides/understanding-histograms.php" title="Laerd Statistics - Understanding Histograms">[7] Laerd Statistics - Understanding Histograms</a></p>
+<p><a href="https://seaborn.pydata.org/tutorial/distributions.html" title="Seaborn - Visualizing distributions of data">[8] Seaborn - Visualizing distributions of data</a></p>
+<p><a href="https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-what-are-the-differences-between-one-tailed-and-two-tailed-tests/" title="UCLA - What are the differences between one-tailed and two-tailed tests?">[9] UCLA - What are the differences between one-tailed and two-tailed tests?</a></p>
+
+    </body>
+    </html>
