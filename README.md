@@ -204,9 +204,6 @@ from scipy import stats
 t_val, p_val = stats.ttest_rel(df.Incongruent, df.Congruent)
 print("t-distribution = %g" % t_val)
 print("p-value = %g" % p_val)
-
-adj_p_val = p_val / 2
-print("adjusted p-value = %g" % adj_p_val)
 ~~~
 
 > t-distribution = 8.02071 <br>
