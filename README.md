@@ -22,12 +22,16 @@ The variable in an experiment that is measured: for a Stroop effect experiment, 
 <br>
 
 ### Alternative Hypothesis
-The outcome a researcher is anticipating: for a Stroop effect experiment, the alternative hypothesis is – for the sample population, the average response time under the congruent words condition is less than the average response time under the incongruent words condition.
+The outcome a researcher is anticipating: for a Stroop effect experiment, the alternative hypothesis (H<sub>1</sub>) is – for the sample population, the average response time under the congruent words condition (μ<sub>c</sub>) is less than the average response time under the incongruent words condition (μ<sub>i</sub>).
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H<sub>1</sub>: μ<sub>i</sub> - μ<sub>c</sub> > 0
 
 <br>
 
 ### Null Hypothesis
-The opposite of the alternative hypothesis: for a Stroop effect experiment, the null hypothesis is – the difference between the mean response times for the sample populations is not statistically significant when comparing those under the incongruent words condition and those under the congruent words condition.
+The opposite of the alternative hypothesis: for a Stroop effect experiment, the null hypothesis (H<sub>0</sub>) is – the difference between the average response time under the incongruent words condition (μ<sub>i</sub>) and the average response time under the congruent words condition (μ<sub>c</sub>) is not statistically significant.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H<sub>0</sub>: μ<sub>c</sub> = μ<sub>i</sub>
 
 <br>
 
