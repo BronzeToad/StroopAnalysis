@@ -76,5 +76,3 @@ print("p-value = %g" % p_val)
 # adjusted p-value
 adj_p_val = p_val / 2
 print("adjusted p-value = %g" % adj_p_val)
-
-
